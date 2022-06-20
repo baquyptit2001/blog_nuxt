@@ -11,7 +11,9 @@
               <span></span>
             </div>
           </a>
-          <a class="navbar-brand" href="#">NBQ</a>
+          <NuxtLink :to="{ name: 'index' }">
+            <a class="navbar-brand" href="#">NBQ</a>
+          </NuxtLink>
         </div>
         <div class="" id="navbarSupportedContent">
           <form class="d-flex">
@@ -225,5 +227,9 @@ main {
 .btn-toggle-nav a:hover,
 .btn-toggle-nav a:focus {
   background-color: #d2f4ea;
+}
+
+.navbar-brand {
+  text-decoration: none;
 }
 </style>
