@@ -17,6 +17,10 @@ export default {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Oxygen&display=swap",
       },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap",
+      },
     ],
     script: [
       {
@@ -24,6 +28,9 @@ export default {
       },
       {
         src: "/js/jquery-3.6.0.min.js",
+      },
+      {
+        src: "/js/app.js",
       },
     ],
   },

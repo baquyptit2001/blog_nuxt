@@ -40,7 +40,7 @@
             </button>
             <div class="collapse show" id="information-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                <li><a href="#" class="link-dark rounded">Trang chủ</a></li>
+                <li><NuxtLink :to="{name: 'index'}" class="link-dark rounded">Trang chủ</NuxtLink></li>
                 <li><a href="#" class="link-dark rounded">Liên lạc</a></li>
               </ul>
             </div>
@@ -52,7 +52,7 @@
             </button>
             <div class="collapse" id="home-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                <li><a href="#" class="link-dark rounded">Tất cả</a></li>
+                <li><NuxtLink :to="{name: 'posts'}" class="link-dark rounded">Tất cả</NuxtLink></li>
                 <li style="padding-left: 15px;">
                   <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
                           data-bs-target="#dashboard-collapse" aria-expanded="false">
@@ -81,9 +81,6 @@
 export default {
   name: "Header",
   mounted() {
-    let plugin = document.createElement('script');
-    plugin.src = "/js/app.js";
-    document.body.appendChild(plugin);
   }
 }
 </script>
@@ -230,6 +227,6 @@ main {
 }
 
 .navbar-brand {
-  text-decoration: none;
+  text-decoration: none !important;
 }
 </style>
