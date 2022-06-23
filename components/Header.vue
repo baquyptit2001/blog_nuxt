@@ -1,6 +1,5 @@
 <template>
   <header>
-    <!-- Fixed navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <div class="d-flex">
@@ -25,7 +24,7 @@
     </nav>
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
       <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Hello, User</h5>
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Hello, {{ user.name }}</h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
@@ -40,7 +39,9 @@
             </button>
             <div class="collapse show" id="information-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                <li><NuxtLink :to="{name: 'index'}" class="link-dark rounded">Trang chủ</NuxtLink></li>
+                <li>
+                  <NuxtLink :to="{name: 'index'}" class="link-dark rounded">Trang chủ</NuxtLink>
+                </li>
                 <li><a href="#" class="link-dark rounded">Liên lạc</a></li>
               </ul>
             </div>
@@ -52,7 +53,9 @@
             </button>
             <div class="collapse" id="home-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                <li><NuxtLink :to="{name: 'posts'}" class="link-dark rounded">Tất cả</NuxtLink></li>
+                <li>
+                  <NuxtLink :to="{name: 'posts'}" class="link-dark rounded">Tất cả</NuxtLink>
+                </li>
                 <li style="padding-left: 15px;">
                   <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
                           data-bs-target="#dashboard-collapse" aria-expanded="false">
@@ -70,6 +73,31 @@
               </ul>
             </div>
           </li>
+          <li class="mb-1">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
+                    data-bs-target="#account-collapse" aria-expanded="true">
+              Thông tin
+            </button>
+            <div class="collapse show" id="account-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" v-if="isLoggedIn">
+
+                <li>
+                  <NuxtLink :to="{name: 'accounts-signup'}" class="link-dark rounded">Cá nhân</NuxtLink>
+                </li>
+                <li>
+                  <a @click="logout" href="#" class="link-dark rounded">Đăng xuất</a>
+                </li>
+              </ul>
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" v-else="isLoggedIn">
+                <li>
+                  <NuxtLink :to="{name: 'accounts-login'}" class="link-dark rounded">Đăng nhập</NuxtLink>
+                </li>
+                <li>
+                  <NuxtLink :to="{name: 'accounts-signup'}" class="link-dark rounded">Đăng ký</NuxtLink>
+                </li>
+              </ul>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
@@ -78,9 +106,56 @@
 
 <script>
 
+import checkCookie from "@/helper/checkCookie";
+import Cookies from "js-cookie";
+import axios from "axios";
+import {URL_API} from "@/common/constants";
+import {notification} from "ant-design-vue";
+
 export default {
   name: "Header",
+  data() {
+    return {
+      user: {
+        name: "User",
+        email: "",
+        avatar: ""
+      },
+      isLoggedIn: false
+    }
+  },
   mounted() {
+    if (checkCookie('token')) {
+      this.user.id = Cookies.get('user.id');
+      this.user.name = Cookies.get('user.name');
+      this.user.email = Cookies.get('user.email');
+      this.isLoggedIn = true;
+    }
+  },
+  methods: {
+    logout() {
+      axios.get(`${URL_API}auth/logout`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('token')}`
+        }
+      }).then(res => {
+        Cookies.remove('token');
+        Cookies.remove('user.id');
+        Cookies.remove('user.name');
+        Cookies.remove('user.email');
+        this.isLoggedIn = false;
+        this.$router.push({name: 'accounts-login'});
+        notification.success({
+          message: 'Đăng xuất thành công',
+          description: res.data.message
+        });
+      }).catch(err => {
+        notification.error({
+          message: 'Đăng xuất không thành công',
+          description: "Có lỗi xảy ra, vui lòng thử lại"
+        });
+      });
+    }
   }
 }
 </script>

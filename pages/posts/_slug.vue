@@ -14,7 +14,9 @@
           <div class="mb-5">
             <div class="d-inline-block">
               <div class="mb-3">
-                <a-avatar size="large" icon="user" />
+                <a-avatar size="large">
+                  {{ $avtName(post.user.name) }}
+                </a-avatar>
                 <a-divider type="vertical" />
                 <a-tag color="blue">
                   <a-icon type="user" />
@@ -32,9 +34,7 @@
           </div>
         </div>
         <a-divider />
-        <div class="mt-3" id="post-content" v-html="post.content">
-
-        </div>
+        <div class="mt-3" id="post-content" v-html="post.content"></div>
       </div>
     </template>
   </div>

@@ -1,33 +1,94 @@
 <template>
   <div class="my-5 post-list">
+    <a-page-header
+      class="mb-5 p-3"
+      style="border: 1px solid rgb(235, 237, 240)"
+    >
+      <h1>
+        Lọc bài viết
+      </h1>
+      <div class="d-flex mt-3">
+        <span class="me-3">
+          <span class="label">
+            Danh mục:
+          </span>
+          <a-select
+            ref="select"
+            v-model:value=filter.category
+            style="width: 120px"
+            @change="fetchPosts"
+          >
+            <a-select-option :value="0" selected>Danh mục</a-select-option>
+            <a-select-option v-for="(category, index) in categories" v-bind:value="category.id" v-bind:key="category.name">
+                {{ category.name }}
+            </a-select-option>
+          </a-select>
+        </span>
+        <span class="me-3">
+          <span class="label">
+            Sắp xếp:
+          </span>
+          <a-select
+            ref="select"
+            v-model:value=filter.sort
+            style="width: 120px"
+            @change="fetchPosts"
+          >
+            <a-select-option :value="1">Mới nhất</a-select-option>
+            <a-select-option :value="2">Cũ nhất</a-select-option>
+          </a-select>
+        </span>
+        <span class="me-3">
+          <span class="label">
+            Hiển thị:
+          </span>
+          <a-select
+            ref="select"
+            v-model:value=pageSize
+            style="width: 120px"
+            @change="changePageSize"
+          >
+            <a-select-option :value="1">1</a-select-option>
+            <a-select-option :value="5">5</a-select-option>
+            <a-select-option :value="10">10</a-select-option>
+            <a-select-option :value="20">20</a-select-option>
+          </a-select>
+        </span>
+      </div>
+    </a-page-header>
     <a-skeleton v-if="loading"/>
     <div v-else>
-      <div class="container">
-        <div class="card" v-for="post in posts">
-          <div class="card__header">
-            <NuxtLink :to="{name: 'posts-slug', params: { slug: post.slug }}">
-              <img :src="post.image" alt="card__image"
-                   class="card__image" width="600">
-            </NuxtLink>
-          </div>
-          <div class="card__body">
-            <span class="tag tag-blue">{{ post.category.name }}</span>
-            <NuxtLink :to="{name: 'posts-slug', params: { slug: post.slug }}" class="post-title">
-              <h4>{{ post.title }}</h4>
-            </NuxtLink>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi perferendis molestiae non nemo doloribus.
-              Doloremque, nihil! At ea atque quidem!</p>
-          </div>
-          <div class="card__footer">
-            <div class="user">
-              <a-icon type="user" size="large"/>
-              <div class="user__info">
-                <h5>{{ post.user.name }}</h5>
-                <small>{{ post.created_at_human }}</small>
+      <div class="row">
+        <div class="col-md-4" v-for="post in posts">
+          <div class="card">
+            <div class="card__header">
+              <NuxtLink :to="{name: 'posts-slug', params: { slug: post.slug }}">
+                <img :src="post.image" alt="card__image"
+                     class="card__image" width="600">
+              </NuxtLink>
+            </div>
+            <div class="card__body">
+              <span class="tag tag-blue">{{ post.category.name }}</span>
+              <NuxtLink :to="{name: 'posts-slug', params: { slug: post.slug }}" class="post-title">
+                <h4>{{ $longName(post.title) }}</h4>
+              </NuxtLink>
+            </div>
+            <div class="card__footer">
+              <div class="user">
+                <a-avatar size="large">
+                  {{ $avtName(post.user.name) }}
+                </a-avatar>
+                <div class="user__info">
+                  <h5>{{ post.user.name }}</h5>
+                  <small>{{ post.created_at_human }}</small>
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <div class="d-flex justify-content-center mt-5">
+        <a-pagination v-model:current="current" :defaultPageSize="pageSize" :total="total" show-less-items v-on:change="switchPage"/>
       </div>
     </div>
   </div>
@@ -45,25 +106,63 @@ export default {
     return {
       posts: [],
       loading: true,
-      error: null
+      error: null,
+      filter: {
+        category: 0,
+        sort: 1
+      },
+      categories: [],
+      current: 1,
+      pageSize: 1,
+      total: null
     };
   },
   mounted() {
+    this.current = this.$store.getters["paginate/getPage"]
+    this.pageSize = this.$store.getters["paginate/getPageSize"]
+    this.filter.category = this.$store.getters["paginate/getCategory"]
+    this.filter.sort = this.$store.getters["paginate/getSort"]
     this.fetchPosts();
+    this.fetchCategories();
   },
   methods: {
     fetchPosts() {
       this.loading = true;
       this.error = null;
+      this.$store.commit("paginate/setSort", this.filter.sort);
+      this.$store.commit("paginate/setCategory", this.filter.category);
       axios
-        .get(URL_API + "posts")
+        .get(URL_API + "posts/" + this.filter.category + "/" + this.filter.sort + "/" + this.current + "/" + this.pageSize)
         .then(response => {
-          this.posts = response.data.data;
+          this.posts = response.data.posts;
+          this.total = response.data.total;
           this.loading = false;
         })
         .catch(error => {
           this.error = error;
         });
+    },
+    fetchCategories() {
+      axios
+        .get(URL_API + "categories")
+        .then(response => {
+          this.categories = response.data.categories;
+          console.log(this.categories);
+        })
+        .catch(error => {
+          this.error = error;
+        });
+    },
+    switchPage() {
+      this.$store.commit("paginate/setPage", this.current);
+      this.fetchPosts();
+    },
+    changePageSize() {
+      this.$store.commit("paginate/setPageSize", this.pageSize);
+      this.fetchPosts();
+    },
+    sorting() {
+      console.log(this.filter.category)
     }
   }
 }
@@ -160,9 +259,14 @@ img {
   color: #666;
 }
 
-.post-title{
+.post-title {
   font-family: "Quicksand", sans-serif;
   text-decoration: none;
-  color:  #000;
+  color: #000;
+  height: 2.5rem;
+}
+
+.label {
+  margin-right: 5px;
 }
 </style>
