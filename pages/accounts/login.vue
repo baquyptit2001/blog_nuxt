@@ -28,6 +28,9 @@
               <div>
                 <a href="#" class="txt3"> Quên mật khẩu? </a>
               </div>
+              <div>
+                <NuxtLink :to="{name: 'accounts-signup'}" class="txt3"> Đăng ký </NuxtLink>
+              </div>
             </div>
             <div class="container-login100-form-btn">
               <button class="login100-form-btn">Đăng nhập</button>

@@ -43,6 +43,11 @@
               <input class="input100" type="password" name="pass" v-model="formState.password_confirmation"/>
               <span class="focus-input100"></span>
             </div>
+            <div class="flex-sb-m w-full p-b-48">
+              <div>
+                <NuxtLink :to="{name: 'accounts-login'}" class="txt3"> Đăng nhập</NuxtLink>
+              </div>
+            </div>
             <div class="container-login100-form-btn">
               <button class="login100-form-btn">Đăng ký</button>
             </div>

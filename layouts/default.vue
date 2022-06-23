@@ -2,7 +2,7 @@
   <div>
     <Header></Header>
     <div class="container">
-      <Nuxt/>
+      <Nuxt style="padding-bottom: 70px"/>
     </div>
     <Footer></Footer>
   </div>
@@ -17,5 +17,9 @@ export default {
 <style scoped>
 html {
   font-family: "Oxygen",serif !important;
+}
+
+body {
+  padding-bottom: 100px;
 }
 </style>
