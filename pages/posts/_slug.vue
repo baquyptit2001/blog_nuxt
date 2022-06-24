@@ -1,7 +1,7 @@
 <template>
   <div class="my-3">
     <template>
-      <a-skeleton v-if="loading"/>
+      <a-skeleton active v-if="loading"/>
       <div v-else>
         <a-page-header
           style="border: 1px solid rgb(235, 237, 240)"
@@ -18,10 +18,12 @@
                   {{ $avtName(post.user.name) }}
                 </a-avatar>
                 <a-divider type="vertical"/>
-                <a-tag color="blue">
-                  <a-icon type="user"/>
-                  <span>{{ post.user.name }}</span>
-                </a-tag>
+                <NuxtLink :to="{name: 'profiles-id', params: {id: post.user.id}}">
+                  <a-tag color="blue">
+                    <a-icon type="user"/>
+                    <span>{{ post.user.name }}</span>
+                  </a-tag>
+                </NuxtLink>
               </div>
               <div class="mb-3">
                 <a-tag color="blue">
@@ -36,7 +38,8 @@
         <a-divider/>
         <div class="mt-3" id="post-content" v-html="post.content"></div>
         <a-divider/>
-        <div>
+        <a-skeleton v-if="loadingComment" avatar active :paragraph="{ rows: 4 }"/>
+        <div v-else>
           <a-list
             item-layout="horizontal"
           >
@@ -56,6 +59,9 @@
               </a-list-item>
             </template>
           </a-list>
+          <div class="d-flex justify-content-center">
+            <a-pagination v-model:current="current" defaultPageSize="5" :total="total" @change="get_comments"/>
+          </div>
           <a-comment v-if="isLoggedIn">
             <template #avatar>
               <a-avatar alt="Han Solo">
@@ -94,7 +100,6 @@
 <script>
 import axios from "axios";
 import {URL_API} from "@/common/constants";
-import dayjs from 'dayjs';
 import Cookies from "js-cookie";
 import checkCookie from "@/helper/checkCookie";
 
@@ -110,27 +115,26 @@ export default {
         user_id: Cookies.get('user.id'),
         post_id: this.$route.params.id
       },
-      item: {
-        author: 'Han Solo',
-        avatar: <a-avatar>U</a-avatar>,
-        content: "value.value",
-        datetime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-      },
       isLoggedIn: false,
+      loadingComment: false,
+      current: 1,
+      pageSize: 5,
+      total: null,
     };
   },
   mounted() {
+    this.isLoggedIn = checkCookie('token');
     this.fetchPosts();
   },
   methods: {
     fetchPosts() {
       this.loading = true;
       this.error = null;
-      this.isLoggedIn = checkCookie('token');
       axios
         .get(URL_API + "posts/" + this.$route.params.slug)
         .then(response => {
           this.post = response.data.data;
+          this.total = this.post.comment_count;
           this.loading = false;
         })
         .catch(error => {
@@ -142,14 +146,28 @@ export default {
       axios
         .post(URL_API + "comments/" + this.$route.params.slug + '/' + Cookies.get('user.id'), this.comment)
         .then(response => {
-          this.post.comments.push(response.data.comments);
           this.comment.content = '';
+          this.current = 1;
+          this.get_comments();
         })
         .catch(error => {
           this.error = error;
           this.loading = false;
         });
-    }
+    },
+    get_comments() {
+      this.loadingComment = true;
+      axios
+        .get(URL_API + "comments/" + this.$route.params.slug + '/' + this.current)
+        .then(response => {
+          this.post.comments = response.data.comments;
+          this.loadingComment = false;
+        })
+        .catch(error => {
+          this.error = error;
+          this.loadingComment = false;
+        });
+    },
   }
 }
 </script>
