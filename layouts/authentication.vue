@@ -4260,9 +4260,6 @@ iframe {
   padding-right: 14px
 }
 
-.p-r-15 {
-  padding-right: 15px
-}
 
 .p-r-16 {
   padding-right: 16px

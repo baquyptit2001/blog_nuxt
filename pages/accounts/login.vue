@@ -31,6 +31,9 @@
               <div>
                 <NuxtLink :to="{name: 'accounts-signup'}" class="txt3"> Đăng ký </NuxtLink>
               </div>
+              <div>
+                <NuxtLink :to="{name: 'accounts-login_with_phone'}" class="txt3"> Đăng nhập với SĐT </NuxtLink>
+              </div>
             </div>
             <div class="container-login100-form-btn">
               <button class="login100-form-btn">Đăng nhập</button>
