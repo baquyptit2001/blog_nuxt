@@ -1,20 +1,25 @@
 <template>
   <div class="mt-3">
-    <a-descriptions title="Thông tin người dùng" bordered>
-      <a-descriptions-item label="Tên">{{ profile.name}}</a-descriptions-item>
-      <a-descriptions-item label="Số điện thoại">{{ profile.phone_number}}</a-descriptions-item>
-      <a-descriptions-item label="Nơi sinh">{{ profile.live }}</a-descriptions-item>
-      <a-descriptions-item label="Ngày sinh">{{ profile.birthday }}</a-descriptions-item>
-      <a-descriptions-item label="Địa chỉ">
-        {{ profile.address }}
-      </a-descriptions-item>
-    </a-descriptions>
-    <NuxtLink :to="{name: 'profiles-update'}">
-      <a-button type="primary" class="mt-3">
-        <a-icon type="edit" />
-        Sửa thông tin
-      </a-button>
-    </NuxtLink>
+    <div v-if="loading">
+      <a-skeleton active></a-skeleton>
+    </div>
+    <div v-else>
+      <a-descriptions title="Thông tin người dùng" bordered>
+        <a-descriptions-item label="Tên">{{ profile.name}}</a-descriptions-item>
+        <a-descriptions-item label="Số điện thoại">{{ profile.phone_number}}</a-descriptions-item>
+        <a-descriptions-item label="Nơi sinh">{{ profile.live }}</a-descriptions-item>
+        <a-descriptions-item label="Ngày sinh">{{ new Date(profile.birthday).toLocaleDateString("vi-VN", {day: '2-digit', month: '2-digit', year: 'numeric'}) }}</a-descriptions-item>
+        <a-descriptions-item label="Địa chỉ">
+          {{ profile.address }}
+        </a-descriptions-item>
+      </a-descriptions>
+      <NuxtLink :to="{name: 'profiles-update'}" v-if="isYou">
+        <a-button type="primary" class="mt-3">
+          <a-icon type="edit" />
+          Sửa thông tin
+        </a-button>
+      </NuxtLink>
+    </div>
   </div>
 </template>
 
@@ -31,6 +36,8 @@ export default {
       profile: {
       },
       no_infor: "Không có thông tin",
+      loading: true,
+      isYou: false,
     };
   },
   mounted() {
@@ -54,6 +61,9 @@ export default {
       axios
         .get(`${URL_API}users/${id}`)
         .then(response => {
+          if (id === Cookies.get("user.id")) {
+            this.isYou = true;
+          }
           console.log(response.data.user);
           this.profile = response.data.user;
           Object.entries(response.data.user).forEach(([key, value]) => {

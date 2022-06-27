@@ -26,7 +26,7 @@
             </div>
             <div class="flex-sb-m w-full p-b-48">
               <div>
-                <a href="#" class="txt3"> Quên mật khẩu? </a>
+                <NuxtLink :to="{name: 'accounts-forgot_password'}" class="txt3"> Quên mật khẩu? </NuxtLink>
               </div>
               <div>
                 <NuxtLink :to="{name: 'accounts-signup'}" class="txt3"> Đăng ký </NuxtLink>

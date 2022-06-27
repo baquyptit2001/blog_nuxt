@@ -82,7 +82,7 @@
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" v-if="isLoggedIn">
 
                 <li>
-                  <NuxtLink :to="{name: 'accounts-signup'}" class="link-dark rounded">Cá nhân</NuxtLink>
+                  <NuxtLink :to="{name: 'profiles-id'}" class="link-dark rounded">Cá nhân</NuxtLink>
                 </li>
                 <li>
                   <a @click="logout" href="#" class="link-dark rounded">Đăng xuất</a>
