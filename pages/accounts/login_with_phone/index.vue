@@ -57,7 +57,7 @@ export default {
         .catch((error) => {
           notification.error({
             message: "Lỗi",
-            description: error.message,
+            description: error.response.data.message,
           });
         });
     },
