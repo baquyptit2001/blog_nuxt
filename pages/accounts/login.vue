@@ -86,10 +86,10 @@ export default {
           }
         })
         .catch((err) => {
-          // notification.error({
-          //   message: "Đăng nhập thất bại",
-          //   description: err.response.data.errors,
-          // });
+          notification.error({
+            message: "Đăng nhập thất bại",
+            description: err.response.data.errors,
+          });
         });
     }
   },
