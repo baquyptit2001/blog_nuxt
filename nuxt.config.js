@@ -46,7 +46,7 @@ export default {
   plugins: [
     '@/plugins/antd-ui',
     '~/plugins/repositories.js',
-    '~/plugins/commonFunction.js'
+    '~/plugins/commonFunction.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -56,7 +56,8 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/typescript
     '@nuxt/typescript-build',
-    '~/modules/material-design-icons.js'
+    '~/modules/material-design-icons.js',
+    {src: '@nuxtjs/laravel-echo', ssr: false}
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules

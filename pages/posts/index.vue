@@ -59,7 +59,7 @@
     <a-skeleton v-if="loading"/>
     <div v-else>
       <div class="row">
-        <div class="col-md-4" v-for="post in posts">
+        <div class="col-md-4 mt-3" v-for="post in posts">
           <div class="card">
             <div class="card__header">
               <NuxtLink :to="{name: 'posts-slug', params: { slug: post.slug }}">
@@ -88,7 +88,7 @@
         </div>
       </div>
       <div class="d-flex justify-content-center mt-5">
-        <a-pagination v-model:current="current" :defaultPageSize="pageSize" :total="total" show-less-items v-on:change="switchPage"/>
+        <a-pagination v-model:current="current" :hideOnSinglePage="true" :defaultPageSize="pageSize" :total="total" show-less-items v-on:change="switchPage"/>
       </div>
     </div>
   </div>

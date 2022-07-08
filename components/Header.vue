@@ -109,8 +109,9 @@
 import checkCookie from "@/helper/checkCookie";
 import Cookies from "js-cookie";
 import axios from "axios";
-import {URL_API} from "@/common/constants";
+import {PUSHER_KEY, URL_API} from "@/common/constants";
 import {notification} from "ant-design-vue";
+import Echo from "laravel-echo";
 
 export default {
   name: "Header",
@@ -121,16 +122,29 @@ export default {
         email: "",
         avatar: ""
       },
-      isLoggedIn: false
+      isLoggedIn: false,
+      usersCount: 0,
+      AES: null
     }
   },
   mounted() {
+    window.Pusher = require('pusher-js');
+    window.Echo = new Echo({
+      broadcaster: 'pusher',
+      key: PUSHER_KEY,
+      cluster: 'ap1',
+      encrypted: true
+    });
+    this.AES = require('crypto-js/aes');
     if (checkCookie('token')) {
       this.user.id = Cookies.get('user.id');
       this.user.name = Cookies.get('user.name');
       this.user.email = Cookies.get('user.email');
       this.isLoggedIn = true;
     }
+  },
+  created() {
+    this.listen();
   },
   methods: {
     logout() {
@@ -155,6 +169,9 @@ export default {
           description: "Có lỗi xảy ra, vui lòng thử lại"
         });
       });
+    },
+    listen() {
+
     }
   }
 }
