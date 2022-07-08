@@ -88,7 +88,7 @@
         </div>
       </div>
       <div class="d-flex justify-content-center mt-5">
-        <a-pagination v-model:current="current" :hideOnSinglePage="true" :defaultPageSize="pageSize" :total="total" show-less-items v-on:change="switchPage"/>
+        <a-pagination  :show-total="(total, range) => `${range[0]}-${range[1]} of ${total} items`" v-model:current="current" :showQuickJumper="true" :hideOnSinglePage="true" :defaultPageSize="pageSize" :total="total" show-less-items v-on:change="switchPage"/>
       </div>
     </div>
   </div>

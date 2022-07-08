@@ -2,7 +2,7 @@ export const state = () => ({
   page: 1,
   sort: 1,
   category: 0,
-  pageSize: 1
+  pageSize: 5
 })
 
 export const getters = {
